@@ -142,8 +142,8 @@ def test_token_variable_access(
         initial_supply
     ], {'from': owner}, decimals=decimals)
 
-    assert token.call().name() == 'Raiden Token'
-    assert token.call().symbol() == 'RDN'
+    assert token.call().name() == 'Yobicash Token'
+    assert token.call().symbol() == 'YBC'
     assert token.call().decimals() == decimals
     assert token.call().totalSupply() == initial_supply
 

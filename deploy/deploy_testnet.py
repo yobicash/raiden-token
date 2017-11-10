@@ -1,7 +1,7 @@
 from gevent import monkey
 monkey.patch_all()
 """
-Deploy RaidenToken and DutchAuction on a testnet
+Deploy YobicashToken and DutchAuction on a testnet
 """
 import requests.adapters as adapter
 adapter.DEFAULT_POOLSIZE = 1000
@@ -104,7 +104,7 @@ def deploy(ctx, **kwargs):
 
     # Load Populus contract proxy classes
     Auction = chain.provider.get_contract_factory('DutchAuction')
-    Token = chain.provider.get_contract_factory('RaidenToken')
+    Token = chain.provider.get_contract_factory('YobicashToken')
 
     # Deploy Auction
     auction_txhash = Auction.deploy(transaction={"from": owner},
@@ -263,7 +263,7 @@ def simulation(ctx, **kwargs):
     web3 = chain.web3
 
     Auction = chain.provider.get_contract_factory('DutchAuction')
-    Token = chain.provider.get_contract_factory('RaidenToken')
+    Token = chain.provider.get_contract_factory('YobicashToken')
 
     auction_contract = Auction(address=auction_contract_address)
     token_contract = Token(address=token_contract_address)

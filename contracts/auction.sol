@@ -7,11 +7,11 @@ import './token.sol';
 /// auction ends if a fixed number of tokens was sold.
 contract DutchAuction {
     /*
-     * Auction for the RDN Token.
+     * Auction for the YBC Token.
      *
      * Terminology:
-     * 1 token unit = Rei
-     * 1 token = RDN = Rei * token_multiplier
+     * 1 token unit = PB
+     * 1 token = YBC = PB * token_multiplier
      * token_multiplier set from token's number of decimals (i.e. 10 ** decimals)
      */
 
@@ -26,7 +26,7 @@ contract DutchAuction {
      * Storage
      */
 
-    RaidenToken public token;
+    YobicashToken public token;
     address public owner_address;
     address public wallet_address;
     address public whitelister_address;
@@ -55,10 +55,10 @@ contract DutchAuction {
 
     uint public token_multiplier;
 
-    // Total number of Rei (RDN * token_multiplier) that will be auctioned
+    // Total number of PB (YBC * token_multiplier) that will be auctioned
     uint public num_tokens_auctioned;
 
-    // Wei per RDN (Rei * token_multiplier)
+    // Wei per YBC (PB * token_multiplier)
     uint public final_price;
 
     // Bidder address => bid value
@@ -157,9 +157,9 @@ contract DutchAuction {
     /// @param _token_address Token address.
     function setup(address _token_address) public isOwner atStage(Stages.AuctionDeployed) {
         require(_token_address != 0x0);
-        token = RaidenToken(_token_address);
+        token = YobicashToken(_token_address);
 
-        // Get number of Rei (RDN * token_multiplier) to be auctioned from token auction balance
+        // Get number of PB (YBC * token_multiplier) to be auctioned from token auction balance
         num_tokens_auctioned = token.balanceOf(address(this));
 
         // Set the number of the token multiplier for its decimals
@@ -217,17 +217,17 @@ contract DutchAuction {
         AuctionStarted(start_time, start_block);
     }
 
-    /// @notice Finalize the auction - sets the final RDN token price and changes the auction
+    /// @notice Finalize the auction - sets the final YBC token price and changes the auction
     /// stage after no bids are allowed anymore.
-    /// @dev Finalize auction and set the final RDN token price.
+    /// @dev Finalize auction and set the final YBC token price.
     function finalizeAuction() public atStage(Stages.AuctionStarted)
     {
         // Missing funds should be 0 at this point
         uint missing_funds = missingFundsToEndAuction();
         require(missing_funds == 0);
 
-        // Calculate the final price = WEI / RDN = WEI / (Rei / token_multiplier)
-        // Reminder: num_tokens_auctioned is the number of Rei (RDN * token_multiplier) that are auctioned
+        // Calculate the final price = WEI / YBC = WEI / (PB / token_multiplier)
+        // Reminder: num_tokens_auctioned is the number of PB (YBC * token_multiplier) that are auctioned
         final_price = token_multiplier * received_wei / num_tokens_auctioned;
 
         end_time = now;
@@ -294,7 +294,7 @@ contract DutchAuction {
             return false;
         }
 
-        // Number of Rei = bid_wei / Rei = bid_wei / (wei_per_RDN * token_multiplier)
+        // Number of PB = bid_wei / PB = bid_wei / (wei_per_YBC * token_multiplier)
         uint num = (token_multiplier * bids[receiver_address]) / final_price;
 
         // Due to final_price floor rounding, the number of assigned tokens may be higher
@@ -327,11 +327,11 @@ contract DutchAuction {
         return true;
     }
 
-    /// @notice Get the RDN price in WEI during the auction, at the time of
+    /// @notice Get the YBC price in WEI during the auction, at the time of
     /// calling this function. Returns `0` if auction has ended.
     /// Returns `price_start` before auction has started.
-    /// @dev Calculates the current RDN token price in WEI.
-    /// @return Returns WEI per RDN (token_multiplier * Rei).
+    /// @dev Calculates the current YBC token price in WEI.
+    /// @return Returns WEI per YBC (token_multiplier * PB).
     function price() public constant returns (uint) {
         if (stage == Stages.AuctionEnded ||
             stage == Stages.TokensDistributed) {
@@ -341,12 +341,12 @@ contract DutchAuction {
     }
 
     /// @notice Get the missing funds needed to end the auction,
-    /// calculated at the current RDN price in WEI.
-    /// @dev The missing funds amount necessary to end the auction at the current RDN price in WEI.
+    /// calculated at the current YBC price in WEI.
+    /// @dev The missing funds amount necessary to end the auction at the current YBC price in WEI.
     /// @return Returns the missing funds amount in WEI.
     function missingFundsToEndAuction() constant public returns (uint) {
 
-        // num_tokens_auctioned = total number of Rei (RDN * token_multiplier) that is auctioned
+        // num_tokens_auctioned = total number of PB (YBC * token_multiplier) that is auctioned
         uint required_wei_at_price = num_tokens_auctioned * price() / token_multiplier;
         if (required_wei_at_price <= received_wei) {
             return 0;
@@ -360,14 +360,14 @@ contract DutchAuction {
      *  Private functions
      */
 
-    /// @dev Calculates the token price (WEI / RDN) at the current timestamp
+    /// @dev Calculates the token price (WEI / YBC) at the current timestamp
     /// during the auction; elapsed time = 0 before auction starts.
     /// Based on the provided parameters, the price does not change in the first
     /// `price_constant^(1/price_exponent)` seconds due to rounding.
     /// Rounding in `decay_rate` also produces values that increase instead of decrease
     /// in the beginning; these spikes decrease over time and are noticeable
     /// only in first hours. This should be calculated before usage.
-    /// @return Returns the token price - Wei per RDN.
+    /// @return Returns the token price - Wei per YBC.
     function calcTokenPrice() constant private returns (uint) {
         uint elapsed;
         if (stage == Stages.AuctionStarted) {

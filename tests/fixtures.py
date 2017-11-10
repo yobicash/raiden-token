@@ -23,19 +23,19 @@ auction_contracts = ['DutchAuction']  # , 'DutchAuctionTest']
 
 contract_args = [
     {
-        'token': 'RaidenToken',
+        'token': 'YobicashToken',
         'decimals': 18,
         'supply': 10000000,
         'args': [10000, 4, 2]
     },
     {
-        'token': 'RaidenToken',
+        'token': 'YobicashToken',
         'decimals': 18,
         'supply': 10000000,
         'args': [1000000, 20, 3]
     },
     {
-        'token': 'RaidenToken',
+        'token': 'YobicashToken',
         'decimals': 18,
         'supply': 10000000,
         'args': [2 * 10 ** 10, 524880000, 3]
@@ -190,13 +190,13 @@ def auction_contract_fast_decline(
 @pytest.fixture()
 def get_token_contract(chain, create_contract, owner):
     # contract can be auction contract or proxy contract
-    def get(arguments, transaction=None, token_type='RaidenToken', decimals=18):
+    def get(arguments, transaction=None, token_type='YobicashToken', decimals=18):
         if not decimals == 18:
-            token_type = 'RaidenToken2'
+            token_type = 'YobicashToken2'
             arguments.insert(0, decimals)
 
-        RaidenToken = chain.provider.get_contract_factory(token_type)
-        token_contract = create_contract(RaidenToken, arguments, transaction, ['Deployed'])
+        YobicashToken = chain.provider.get_contract_factory(token_type)
+        token_contract = create_contract(YobicashToken, arguments, transaction, ['Deployed'])
 
         if print_the_logs:
             print_logs(token_contract, 'Transfer', token_type)

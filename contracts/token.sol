@@ -182,21 +182,21 @@ contract StandardToken is Token {
 }
 
 
-/// @title Raiden Token
-contract RaidenToken is StandardToken {
+/// @title Yobicash Token
+contract YobicashToken is StandardToken {
 
     /*
      *  Terminology:
-     *  1 token unit = Rei
-     *  1 token = RDN = Rei * multiplier
+     *  1 token unit = PB
+     *  1 token = YBC = PB * multiplier
      *  multiplier set from token's number of decimals (i.e. 10 ** decimals)
      */
 
     /*
      *  Token metadata
      */
-    string constant public name = "Raiden Token";
-    string constant public symbol = "RDN";
+    string constant public name = "Yobicash Token";
+    string constant public symbol = "YBC";
     uint8 constant public decimals = 18;
     uint constant multiplier = 10 ** uint(decimals);
 
@@ -214,8 +214,8 @@ contract RaidenToken is StandardToken {
     /// and assigns all tokens to dutch auction.
     /// @param auction_address Address of dutch auction contract.
     /// @param wallet_address Address of wallet.
-    /// @param initial_supply Number of initially provided token units (Rei).
-    function RaidenToken(
+    /// @param initial_supply Number of initially provided token units (PB).
+    function YobicashToken(
         address auction_address,
         address wallet_address,
         uint initial_supply)
@@ -225,10 +225,10 @@ contract RaidenToken is StandardToken {
         require(auction_address != 0x0);
         require(wallet_address != 0x0);
 
-        // Initial supply is in Rei
+        // Initial supply is in PB
         require(initial_supply > multiplier);
 
-        // Total supply of Rei at deployment
+        // Total supply of PB at deployment
         totalSupply = initial_supply;
 
         balances[auction_address] = initial_supply / 2;
@@ -242,10 +242,10 @@ contract RaidenToken is StandardToken {
         assert(totalSupply == balances[auction_address] + balances[wallet_address]);
     }
 
-    /// @notice Allows `msg.sender` to simply destroy `num` token units (Rei). This means the total
+    /// @notice Allows `msg.sender` to simply destroy `num` token units (PB). This means the total
     /// token supply will decrease.
-    /// @dev Allows to destroy token units (Rei).
-    /// @param num Number of token units (Rei) to burn.
+    /// @dev Allows to destroy token units (PB).
+    /// @param num Number of token units (PB) to burn.
     function burn(uint num) public {
         require(num > 0);
         require(balances[msg.sender] >= num);

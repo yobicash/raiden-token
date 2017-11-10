@@ -1,6 +1,8 @@
-# Raiden Token
+# Yobicash Token
 
 ## Smart Contracts, Unittests and Infrastructure.
+
+The Yobicash token follows the model of the Raiden token, a dutch auction where the price of the token is set at the end of the crowdsale as the lowest bid price.
 
 ### Installation
 
